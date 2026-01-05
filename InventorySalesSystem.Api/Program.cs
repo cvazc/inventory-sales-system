@@ -1,3 +1,5 @@
+using InventorySalesSystem.Api.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
@@ -20,11 +22,3 @@ app.MapPost("/products", (Product product) =>
 
 
 app.Run();
-
-
-public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-}
