@@ -1,23 +1,22 @@
 using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-List<Product> products = new List<Product>();
+var productService = new ProductService();
 
 app.MapGet("/products", () =>
 {
-   return Results.Ok(products); 
+   var products = productService.GetAll();
+   return Results.Ok(products);
 });
 
 app.MapPost("/products", (Product product) =>
 {
-    product.Id = products.Count + 1;
-
-    products.Add(product);
-
-    return Results.Created($"/products/{product.Id}", product);
+    var createdProduct = productService.Create(product);
+    return Results.Created($"/products/{createdProduct.Id}", createdProduct);
 });
 
 
