@@ -16,14 +16,14 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var products = _productService.GetAll();
+        var products = await _productService.GetAllAsync();
         return Ok(products);
     }
 
     [HttpPost]
-    public IActionResult Create(Product product)
+    public async Task<IActionResult> Create(Product product)
     {
         if (string.IsNullOrWhiteSpace(product.Name))
         {
@@ -35,7 +35,7 @@ public class ProductsController : ControllerBase
             return BadRequest("Product price must be greater than zero.");
         }
 
-        var createdProduct = _productService.Create(product);
+        var createdProduct = await _productService.CreateAsync(product);
 
         return CreatedAtAction(nameof(GetAll), new { id = createdProduct.Id }, createdProduct);
     }

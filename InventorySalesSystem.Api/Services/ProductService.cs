@@ -1,20 +1,27 @@
+using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventorySalesSystem.Api.Services;
 
 public class ProductService
 {
-    private readonly List<Product> _products = new();
+    private readonly InventoryDbContext _dbContext;
 
-    public IEnumerable<Product> GetAll()
+    public ProductService(InventoryDbContext dbContext)
     {
-        return _products;
+        _dbContext = dbContext;
     }
 
-    public Product Create(Product product)
+    public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        product.Id = _products.Count + 1;
-        _products.Add(product);
+        return await _dbContext.Products.ToListAsync();
+    }
+
+    public async Task<Product> CreateAsync(Product product)
+    {
+        _dbContext.Products.Add(product);
+        await _dbContext.SaveChangesAsync();
         return product;
     }
 }
