@@ -1,0 +1,21 @@
+### Get all products
+# Description:
+# This request return the list of all products from the API.
+GET {{apiBaseUrl}}/products
+Accept: application/json
+
+###
+
+### Create a new product
+# Description:
+# This request creates a new product in the in-memory list.
+POST {{apiBaseUrl}}/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Keyboard",
+  "price": 1200
+}
+
+###

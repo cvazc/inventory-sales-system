@@ -1,0 +1,13 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "apiBaseUrl": "http://localhost:5230"
+        },
+        "dev": {
+            "apiBaseUrl": "http://localhost:5230"
+        },
+        "prod": {
+            "apiBaseUrl": "https://inventory-api.example.com"
+        }
+    }
+}
