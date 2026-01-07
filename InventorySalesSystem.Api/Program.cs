@@ -1,9 +1,15 @@
-using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<ProductService>();
+builder.Services.AddDbContext<InventoryDbContext>(options =>
+{
+    options.UseInMemoryDatabase("InventorySalesDatabase");
+});
+
+builder.Services.AddScoped<ProductService>();
 
 builder.Services.AddControllers();
 
