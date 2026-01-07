@@ -4,9 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile(
+    "appsettings.Local.json",
+    optional: true,
+    reloadOnChange: true
+);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<InventoryDbContext>(options =>
 {
-    options.UseInMemoryDatabase("InventorySalesDatabase");
+    options.UseSqlServer(connectionString);
 });
 
 builder.Services.AddScoped<ProductService>();
