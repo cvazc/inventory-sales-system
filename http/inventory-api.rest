@@ -4,14 +4,18 @@ Accept: application/json
 
 ###
 
-### Create a new product
+### Create a new product (valid)
 POST {{apiBaseUrl}}/api/products
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Keyboard",
-  "price": 1200
+  "sku": "PROD-0001",
+  "name": "Mechanical Keyboard",
+  "description": "Mechanical keyboard with blue switches",
+  "stockQuantity": 10,
+  "price": 1200,
+  "isActive": true
 }
 
 ###
@@ -22,8 +26,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
+  "sku": "PROD-0001",
   "name": "",
-  "price": 1200
+  "description": "Mechanical keyboard with blue switches",
+  "stockQuantity": 10,
+  "price": 1200,
+  "isActive": true
 }
 
 ###

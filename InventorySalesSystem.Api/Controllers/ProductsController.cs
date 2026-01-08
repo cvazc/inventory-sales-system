@@ -25,6 +25,11 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Product product)
     {
+        if (string.IsNullOrWhiteSpace(product.Sku))
+        {
+            return BadRequest("Product SKU is required.");
+        }
+
         if (string.IsNullOrWhiteSpace(product.Name))
         {
             return BadRequest("Product name is required.");
@@ -33,6 +38,11 @@ public class ProductsController : ControllerBase
         if (product.Price <= 0)
         {
             return BadRequest("Product price must be greater than zero.");
+        }
+
+        if (product.StockQuantity < 0)
+        {
+            return BadRequest("Stock quantity cannot be negative.");
         }
 
         var createdProduct = await _productService.CreateAsync(product);
