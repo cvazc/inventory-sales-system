@@ -93,3 +93,9 @@ Accept: application/json
 ### Get all sales
 GET {{apiBaseUrl}}/api/sales
 Accept: application/json
+
+###
+
+### Get sale by id (replace 1 with a real id)
+GET {{apiBaseUrl}}/api/sales/1
+Accept: application/json

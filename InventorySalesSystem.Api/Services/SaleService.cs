@@ -100,6 +100,16 @@ public class SaleService
         return ToResponse(sale);
     }
 
+    public async Task<SaleResponse> GetByIdAsync(int id)
+    {
+        var sale = await _dbContext.Sales
+            .Include(s => s.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        return sale is null ? null : ToResponse(sale);
+    }
+
     private static SaleResponse ToResponse(Sale sale)
     {
         return new SaleResponse

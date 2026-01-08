@@ -35,4 +35,17 @@ public class SalesController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var sale = await _saleService.GetByIdAsync(id);
+
+        if (sale is null)
+        {
+            return NotFound($"Sale with id {id} was not found.");
+        }
+
+        return Ok(sale);
+    }
 }
