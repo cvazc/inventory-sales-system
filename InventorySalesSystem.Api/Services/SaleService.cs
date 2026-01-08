@@ -32,8 +32,22 @@ public class SaleService
             throw new ArgumentException("A sale must contain at least one item.");
         }
 
+        request.Items = request.Items
+            .GroupBy(i => i.ProductId)
+            .Select(g => new CreateSaleItemRequest
+            {
+                ProductId = g.Key,
+                Quantity = g.Sum(x => x.Quantity)
+            })
+            .ToList();
+
         foreach (var item in request.Items)
         {
+            if (item.ProductId <= 0)
+            {
+                throw new ArgumentException("ProductId must be a positive integer.");
+            }
+
             if (item.Quantity <= 0)
             {
                 throw new ArgumentException("Quantity must be greater than zero.");
@@ -97,10 +111,16 @@ public class SaleService
 
         await transaction.CommitAsync();
 
+        await _dbContext.Entry(sale)
+            .Collection(s => s.Items)
+            .Query()
+            .Include(i => i.Product)
+            .LoadAsync();
+
         return ToResponse(sale);
     }
 
-    public async Task<SaleResponse> GetByIdAsync(int id)
+    public async Task<SaleResponse?> GetByIdAsync(int id)
     {
         var sale = await _dbContext.Sales
             .Include(s => s.Items)

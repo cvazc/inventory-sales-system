@@ -99,3 +99,19 @@ Accept: application/json
 ### Get sale by id (replace 1 with a real id)
 GET {{apiBaseUrl}}/api/sales/1
 Accept: application/json
+
+###
+
+### Create a sale (items duplicated - should be consolidated)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 1 },
+    { "productId": 1, "quantity": 2 }
+  ]
+}
+
