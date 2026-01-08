@@ -18,6 +18,7 @@ builder.Services.AddDbContext<InventoryDbContext>(options =>
 });
 
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<SaleService>();
 
 builder.Services.AddControllers();
 
