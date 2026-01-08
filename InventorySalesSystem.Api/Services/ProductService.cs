@@ -20,8 +20,12 @@ public class ProductService
 
     public async Task<Product> CreateAsync(Product product)
     {
+        product.CreatedAt = DateTime.UtcNow;
+        product.IsActive = true;
+
         _dbContext.Products.Add(product);
         await _dbContext.SaveChangesAsync();
+        
         return product;
     }
 }
