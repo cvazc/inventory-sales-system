@@ -45,3 +45,51 @@ Accept: application/json
   "name": "Mouse",
   "price": -10
 }
+
+###
+
+### Create a product to sell (ensure it has stock)
+POST {{apiBaseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "PROD-1000",
+  "name": "Wireless Mouse",
+  "description": "2.4G wireless mouse",
+  "stockQuantity": 20,
+  "price": 350,
+  "isActive": true
+}
+
+###
+
+### Create a sale (valid)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 2 }
+  ]
+}
+
+###
+
+### Create a sale (invalid - no items)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": []
+}
+
+###
+
+### Get all sales
+GET {{apiBaseUrl}}/api/sales
+Accept: application/json
