@@ -14,16 +14,18 @@ public class SaleService
         _dbContext = dbContext;
     }
 
-    public async Task<List<Sale>> GetAllAsync()
+    public async Task<List<SaleResponse>> GetAllAsync()
     {
-        return await _dbContext.Sales
+        var sales = await _dbContext.Sales
             .Include(s => s.Items)
             .ThenInclude(i => i.Product)
             .OrderByDescending(s => s.Id)
             .ToListAsync();
+
+        return sales.Select(ToResponse).ToList();
     }
 
-    public async Task<Sale> CreateAsync(CreateSaleRequest request)
+    public async Task<SaleResponse> CreateAsync(CreateSaleRequest request)
     {
         if (request.Items is null || request.Items.Count == 0)
         {
@@ -95,6 +97,25 @@ public class SaleService
 
         await transaction.CommitAsync();
 
-        return sale;
+        return ToResponse(sale);
+    }
+
+    private static SaleResponse ToResponse(Sale sale)
+    {
+        return new SaleResponse
+        {
+            Id = sale.Id,
+            CustomerName = sale.CustomerName,
+            CreatedAt = sale.CreatedAt,
+            TotalAmount = sale.TotalAmount,
+            Items = sale.Items.Select(i => new SaleItemResponse
+            {
+                ProductId = i.ProductId,
+                ProductName = i.Product?.Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice,
+                LineTotal = i.LineTotal
+            }).ToList()
+        };
     }
 }
