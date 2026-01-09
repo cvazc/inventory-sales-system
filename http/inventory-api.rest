@@ -115,3 +115,40 @@ Accept: application/json
   ]
 }
 
+###
+
+### Adjust stock (add 10)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Manual restock"
+}
+
+###
+
+### Adjust stock (remove 5)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": -5,
+  "reason": "Stock correction"
+}
+
+###
+
+### Adjust stock (invalid - would go below zero)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": -999,
+  "reason": "Invalid"
+}
+
+###
