@@ -1,3 +1,4 @@
+using InventorySalesSystem.Api.Contracts.Products;
 using InventorySalesSystem.Api.Models;
 using InventorySalesSystem.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -48,5 +49,30 @@ public class ProductsController : ControllerBase
         var createdProduct = await _productService.CreateAsync(product);
 
         return CreatedAtAction(nameof(GetAll), new { id = createdProduct.Id }, createdProduct);
+    }
+
+    [HttpPut("{id:int}/stock")]
+    public async Task<IActionResult> AdjustStock(int id, AdjustStockRequest request)
+    {
+        if (request.Delta == 0)
+        {
+            return BadRequest("Delta must not be zero.");
+        }
+
+        try
+        {
+            var updatedProduct = await _productService.AdjustStockAsync(id, request.Delta);
+
+            if (updatedProduct is null)
+            {
+                return NotFound($"Product with id {id} was not found.");
+            }
+
+            return Ok(updatedProduct);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

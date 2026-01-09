@@ -25,7 +25,32 @@ public class ProductService
 
         _dbContext.Products.Add(product);
         await _dbContext.SaveChangesAsync();
-        
+
+        return product;
+    }
+
+    public async Task<Product?> AdjustStockAsync(int productId, int delta)
+    {
+        var product = await _dbContext.Products
+            .FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (product is null)
+        {
+            return null;
+        }
+
+        var newStock = product.StockQuantity + delta;
+
+        if (newStock < 0)
+        {
+            throw new ArgumentException("Stock cannot go below zero.");
+        }
+
+        product.StockQuantity = newStock;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
         return product;
     }
 }
