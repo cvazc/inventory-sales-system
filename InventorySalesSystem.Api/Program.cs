@@ -1,4 +1,5 @@
 using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Api.Middleware;
 using InventorySalesSystem.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,8 @@ builder.Services.AddScoped<SaleService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
