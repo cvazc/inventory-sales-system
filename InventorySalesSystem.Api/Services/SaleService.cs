@@ -1,5 +1,6 @@
 using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,7 @@ public class SaleService
     {
         if (request.Items is null || request.Items.Count == 0)
         {
-            throw new ArgumentException("A sale must contain at least one item.");
+            throw new BadRequestException("A sale must contain at least one item.");
         }
 
         request.Items = request.Items
@@ -45,12 +46,12 @@ public class SaleService
         {
             if (item.ProductId <= 0)
             {
-                throw new ArgumentException("ProductId must be a positive integer.");
+                throw new BadRequestException("ProductId must be a positive integer.");
             }
 
             if (item.Quantity <= 0)
             {
-                throw new ArgumentException("Quantity must be greater than zero.");
+                throw new BadRequestException("Quantity must be greater than zero.");
             }
         }
 
@@ -63,7 +64,7 @@ public class SaleService
 
         if (products.Count != productIds.Count)
         {
-            throw new ArgumentException("One or more products to not exist.");
+            throw new BadRequestException("One or more products to not exist.");
         }
 
         var sale = new Sale
@@ -80,12 +81,12 @@ public class SaleService
 
             if (!product.IsActive)
             {
-                throw new ArgumentException($"Product {product.Id} is not active.");
+                throw new BadRequestException($"Product {product.Id} is not active.");
             }
 
             if (product.StockQuantity < reqItem.Quantity)
             {
-                throw new ArgumentException($"Not enough stock for product {product.Id}. Current stock: {product.StockQuantity}.");
+                throw new BadRequestException($"Not enough stock for product {product.Id}. Current stock: {product.StockQuantity}.");
             }
 
             product.StockQuantity -= reqItem.Quantity;
@@ -127,7 +128,12 @@ public class SaleService
             .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(s => s.Id == id);
 
-        return sale is null ? null : ToResponse(sale);
+        if (sale is null)
+        {
+            throw new NotFoundException($"Sale with id {id} was not found.");
+        }
+
+        return ToResponse(sale);
     }
 
     private static SaleResponse ToResponse(Sale sale)

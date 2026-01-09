@@ -25,27 +25,14 @@ public class SalesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateSaleRequest request)
     {
-        try
-        {
-            var sale = await _saleService.CreateAsync(request);
-            return Created($"/api/sales/{sale.Id}", sale);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var sale = await _saleService.CreateAsync(request);
+        return Created($"/api/sales/{sale.Id}", sale);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var sale = await _saleService.GetByIdAsync(id);
-
-        if (sale is null)
-        {
-            return NotFound($"Sale with id {id} was not found.");
-        }
-
         return Ok(sale);
     }
 }
