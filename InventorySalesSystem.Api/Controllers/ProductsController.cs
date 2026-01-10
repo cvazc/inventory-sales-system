@@ -54,25 +54,7 @@ public class ProductsController : ControllerBase
     [HttpPut("{id:int}/stock")]
     public async Task<IActionResult> AdjustStock(int id, AdjustStockRequest request)
     {
-        if (request.Delta == 0)
-        {
-            return BadRequest("Delta must not be zero.");
-        }
-
-        try
-        {
-            var updatedProduct = await _productService.AdjustStockAsync(id, request.Delta);
-
-            if (updatedProduct is null)
-            {
-                return NotFound($"Product with id {id} was not found.");
-            }
-
-            return Ok(updatedProduct);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var updatedProduct = await _productService.AdjustStockAsync(id, request.Delta);
+        return Ok(updatedProduct);
     }
 }

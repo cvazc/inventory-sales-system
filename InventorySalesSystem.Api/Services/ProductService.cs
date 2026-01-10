@@ -1,4 +1,5 @@
 using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,7 @@ public class ProductService
 
         if (product is null)
         {
-            return null;
+            throw new NotFoundException($"Product with id {productId} was not found.");
         }
 
         var newStock = product.StockQuantity + delta;
