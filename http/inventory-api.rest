@@ -152,3 +152,21 @@ Accept: application/json
 }
 
 ###
+
+### Get paged sales (page 1)
+GET {{apiBaseUrl}}/api/sales?page=1&pageSize=5
+Accept: application/json
+
+###
+
+### Get paged sales (page 2)
+GET {{apiBaseUrl}}/api/sales?page=2&pageSize=5
+Accept: application/json
+
+###
+
+### Get paged sales (invalid pageSize)
+GET {{apiBaseUrl}}/api/sales?page=1&pageSize=1000
+Accept: application/json
+
+###

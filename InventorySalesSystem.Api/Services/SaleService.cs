@@ -1,3 +1,4 @@
+using InventorySalesSystem.Api.Contracts.Common;
 using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Exceptions;
@@ -15,15 +16,41 @@ public class SaleService
         _dbContext = dbContext;
     }
 
-    public async Task<List<SaleResponse>> GetAllAsync()
+    public async Task<PagedResult<SaleResponse>> GetAllAsync(int page, int pageSize)
     {
-        var sales = await _dbContext.Sales
+        if (page <= 0)
+        {
+            throw new BadRequestException("Page must be greater than zero.");
+        }
+
+        if (pageSize <= 0 || pageSize > 100)
+        {
+            throw new BadRequestException("PageSize must be between 1 and 100.");
+        }
+
+        var query = _dbContext.Sales
             .Include(s => s.Items)
             .ThenInclude(i => i.Product)
             .OrderByDescending(s => s.Id)
+            .AsQueryable();
+
+        var totalItems = await query.CountAsync();
+
+        var sales = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
 
-        return sales.Select(ToResponse).ToList();
+        var result = new PagedResult<SaleResponse>
+        {
+            Items = sales.Select(ToResponse).ToList(),
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+        };
+
+        return result;
     }
 
     public async Task<SaleResponse> CreateAsync(CreateSaleRequest request)
