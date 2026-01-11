@@ -2,6 +2,7 @@ using InventorySalesSystem.Api.Contracts.Products;
 using InventorySalesSystem.Api.Models;
 using InventorySalesSystem.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using InventorySalesSystem.Api.Services.Interfaces;
 
 namespace InventorySalesSystem.Api.Controllers;
 
@@ -9,7 +10,7 @@ namespace InventorySalesSystem.Api.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly ProductService _productService;
+    private readonly IProductService _productService;
 
     public ProductsController(ProductService productService)
     {

@@ -1,5 +1,6 @@
 using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Services;
+using InventorySalesSystem.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySalesSystem.Api.Controllers;
@@ -8,9 +9,9 @@ namespace InventorySalesSystem.Api.Controllers;
 [Route("api/[controller]")]
 public class SalesController : ControllerBase
 {
-    private readonly SaleService _saleService;
+    private readonly ISaleService _saleService;
 
-    public SalesController(SaleService saleService)
+    public SalesController(ISaleService saleService)
     {
         _saleService = saleService;
     }

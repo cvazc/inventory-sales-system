@@ -4,6 +4,7 @@ using InventorySalesSystem.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using InventorySalesSystem.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +21,8 @@ builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<SaleService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ISaleService, SaleService>();
 
 builder.Services
     .AddControllers()

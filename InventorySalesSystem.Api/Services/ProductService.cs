@@ -2,10 +2,11 @@ using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using InventorySalesSystem.Api.Services.Interfaces;
 
 namespace InventorySalesSystem.Api.Services;
 
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly InventoryDbContext _dbContext;
 
@@ -53,5 +54,15 @@ public class ProductService
         await _dbContext.SaveChangesAsync();
 
         return product;
+    }
+
+    Task<List<Product>> IProductService.GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Product?> GetByIdAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 }
