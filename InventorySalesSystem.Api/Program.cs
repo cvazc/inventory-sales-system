@@ -7,6 +7,7 @@ using FluentValidation.AspNetCore;
 using InventorySalesSystem.Api.Services.Interfaces;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Events.Handlers;
+using InventorySalesSystem.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +17,7 @@ builder.Configuration.AddJsonFile(
     reloadOnChange: true
 );
 
-builder.Services.AddDbContext<InventoryDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-    options.UseSqlServer(connectionString, sql =>
-        sql.MigrationsAssembly("InventorySalesSystem.Infrastructure"));
-});
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
