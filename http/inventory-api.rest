@@ -1,0 +1,172 @@
+### Get all products
+GET {{apiBaseUrl}}/api/products
+Accept: application/json
+
+###
+
+### Create a new product (valid)
+POST {{apiBaseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "PROD-0001",
+  "name": "Mechanical Keyboard",
+  "description": "Mechanical keyboard with blue switches",
+  "stockQuantity": 10,
+  "price": 1200,
+  "isActive": true
+}
+
+###
+
+### Create a new product - invalid (missing name)
+POST {{apiBaseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "PROD-0001",
+  "name": "",
+  "description": "Mechanical keyboard with blue switches",
+  "stockQuantity": 10,
+  "price": 1200,
+  "isActive": true
+}
+
+###
+
+### Create a new product - invalid (negative price)
+POST {{apiBaseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Mouse",
+  "price": -10
+}
+
+###
+
+### Create a product to sell (ensure it has stock)
+POST {{apiBaseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "sku": "PROD-1000",
+  "name": "Wireless Mouse",
+  "description": "2.4G wireless mouse",
+  "stockQuantity": 20,
+  "price": 350,
+  "isActive": true
+}
+
+###
+
+### Create a sale (valid)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 2 }
+  ]
+}
+
+###
+
+### Create a sale (invalid - no items)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": []
+}
+
+###
+
+### Get all sales
+GET {{apiBaseUrl}}/api/sales
+Accept: application/json
+
+###
+
+### Get sale by id (replace 1 with a real id)
+GET {{apiBaseUrl}}/api/sales/1
+Accept: application/json
+
+###
+
+### Create a sale (items duplicated - should be consolidated)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 1 },
+    { "productId": 1, "quantity": 2 }
+  ]
+}
+
+###
+
+### Adjust stock (add 10)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Manual restock"
+}
+
+###
+
+### Adjust stock (remove 5)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": -5,
+  "reason": "Stock correction"
+}
+
+###
+
+### Adjust stock (invalid - would go below zero)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": -999,
+  "reason": "Invalid"
+}
+
+###
+
+### Get paged sales (page 1)
+GET {{apiBaseUrl}}/api/sales?page=1&pageSize=5
+Accept: application/json
+
+###
+
+### Get paged sales (page 2)
+GET {{apiBaseUrl}}/api/sales?page=2&pageSize=5
+Accept: application/json
+
+###
+
+### Get paged sales (invalid pageSize)
+GET {{apiBaseUrl}}/api/sales?page=1&pageSize=1000
+Accept: application/json
+
+###
