@@ -1,6 +1,7 @@
 using InventorySalesSystem.Api.Contracts.Common;
 using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
 using InventorySalesSystem.Api.Services.Interfaces;
@@ -11,10 +12,12 @@ namespace InventorySalesSystem.Api.Services;
 public class SaleService : ISaleService
 {
     private readonly InventoryDbContext _dbContext;
+    private readonly SaleEventPublisher _saleEventPublisher;
 
-    public SaleService(InventoryDbContext dbContext)
+    public SaleService(InventoryDbContext dbContext, SaleEventPublisher saleEventPublisher)
     {
         _dbContext = dbContext;
+        _saleEventPublisher = saleEventPublisher;
     }
 
     public async Task<PagedResult<SaleResponse>> GetAllAsync(int page, int pageSize)
@@ -139,6 +142,10 @@ public class SaleService : ISaleService
         await _dbContext.SaveChangesAsync();
 
         await transaction.CommitAsync();
+
+        _saleEventPublisher.PublishSaleCreated(
+            new SaleCreatedEvent(sale.Id, sale.TotalAmount, sale.CreatedAt)
+        );
 
         await _dbContext.Entry(sale)
             .Collection(s => s.Items)
