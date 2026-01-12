@@ -16,10 +16,10 @@ builder.Configuration.AddJsonFile(
     reloadOnChange: true
 );
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<InventoryDbContext>(options =>
 {
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
     options.UseSqlServer(connectionString, sql =>
         sql.MigrationsAssembly("InventorySalesSystem.Infrastructure"));
 });
