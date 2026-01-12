@@ -1,4 +1,4 @@
-using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Domain.Entities;
 using InventorySalesSystem.Api.Services;

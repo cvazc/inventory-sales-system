@@ -1,6 +1,6 @@
 using InventorySalesSystem.Api.Contracts.Common;
 using InventorySalesSystem.Api.Contracts.Sales;
-using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Domain.Entities;

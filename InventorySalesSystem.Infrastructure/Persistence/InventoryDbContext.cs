@@ -1,7 +1,7 @@
 using InventorySalesSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace InventorySalesSystem.Api.Data;
+namespace InventorySalesSystem.Infrastructure.Persistence;
 
 public class InventoryDbContext : DbContext
 {

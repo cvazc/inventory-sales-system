@@ -1,4 +1,4 @@
-using InventorySalesSystem.Api.Data;
+using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Middleware;
 using InventorySalesSystem.Api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<InventoryDbContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString, sql =>
+        sql.MigrationsAssembly("InventorySalesSystem.Infrastructure"));
 });
 
 builder.Services.AddScoped<IProductService, ProductService>();
