@@ -3,7 +3,7 @@ using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Exceptions;
-using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Domain.Entities;
 using InventorySalesSystem.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Models;
+namespace InventorySalesSystem.Domain.Entities;
 
 public class SaleItem
 {

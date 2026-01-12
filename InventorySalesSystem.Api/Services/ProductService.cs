@@ -1,6 +1,6 @@
 using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Exceptions;
-using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using InventorySalesSystem.Api.Services.Interfaces;
 

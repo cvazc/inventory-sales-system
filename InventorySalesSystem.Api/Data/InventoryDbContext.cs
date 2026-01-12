@@ -1,4 +1,4 @@
-using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySalesSystem.Api.Data;

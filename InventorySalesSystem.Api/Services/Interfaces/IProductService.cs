@@ -1,4 +1,4 @@
-using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Domain.Entities;
 
 namespace InventorySalesSystem.Api.Services.Interfaces;
 
