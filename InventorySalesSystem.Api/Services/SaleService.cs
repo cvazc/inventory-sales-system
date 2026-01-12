@@ -149,7 +149,7 @@ public class SaleService : ISaleService
         return ToResponse(sale);
     }
 
-    public async Task<SaleResponse?> GetByIdAsync(int id)
+    public async Task<SaleResponse> GetByIdAsync(int id)
     {
         var sale = await _dbContext.Sales
             .Include(s => s.Items)

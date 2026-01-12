@@ -15,7 +15,7 @@ public class ProductService : IProductService
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<List<Product>> GetAllAsync()
     {
         return await _dbContext.Products.ToListAsync();
     }
@@ -31,7 +31,7 @@ public class ProductService : IProductService
         return product;
     }
 
-    public async Task<Product?> AdjustStockAsync(int productId, int delta)
+    public async Task<Product> AdjustStockAsync(int productId, int delta)
     {
         var product = await _dbContext.Products
             .FirstOrDefaultAsync(p => p.Id == productId);
@@ -45,7 +45,7 @@ public class ProductService : IProductService
 
         if (newStock < 0)
         {
-            throw new ArgumentException("Stock cannot go below zero.");
+            throw new BadRequestException("Stock cannot go below zero.");
         }
 
         product.StockQuantity = newStock;
@@ -54,11 +54,6 @@ public class ProductService : IProductService
         await _dbContext.SaveChangesAsync();
 
         return product;
-    }
-
-    Task<List<Product>> IProductService.GetAllAsync()
-    {
-        throw new NotImplementedException();
     }
 
     public Task<Product?> GetByIdAsync(int id)
