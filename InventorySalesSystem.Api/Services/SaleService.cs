@@ -3,11 +3,12 @@ using InventorySalesSystem.Api.Contracts.Sales;
 using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
+using InventorySalesSystem.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySalesSystem.Api.Services;
 
-public class SaleService
+public class SaleService : ISaleService
 {
     private readonly InventoryDbContext _dbContext;
 
@@ -148,7 +149,7 @@ public class SaleService
         return ToResponse(sale);
     }
 
-    public async Task<SaleResponse?> GetByIdAsync(int id)
+    public async Task<SaleResponse> GetByIdAsync(int id)
     {
         var sale = await _dbContext.Sales
             .Include(s => s.Items)

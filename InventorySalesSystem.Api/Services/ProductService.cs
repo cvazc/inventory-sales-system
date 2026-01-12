@@ -2,10 +2,11 @@ using InventorySalesSystem.Api.Data;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using InventorySalesSystem.Api.Services.Interfaces;
 
 namespace InventorySalesSystem.Api.Services;
 
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly InventoryDbContext _dbContext;
 
@@ -14,7 +15,7 @@ public class ProductService
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<List<Product>> GetAllAsync()
     {
         return await _dbContext.Products.ToListAsync();
     }
@@ -30,7 +31,7 @@ public class ProductService
         return product;
     }
 
-    public async Task<Product?> AdjustStockAsync(int productId, int delta)
+    public async Task<Product> AdjustStockAsync(int productId, int delta)
     {
         var product = await _dbContext.Products
             .FirstOrDefaultAsync(p => p.Id == productId);
@@ -44,7 +45,7 @@ public class ProductService
 
         if (newStock < 0)
         {
-            throw new ArgumentException("Stock cannot go below zero.");
+            throw new BadRequestException("Stock cannot go below zero.");
         }
 
         product.StockQuantity = newStock;
@@ -53,5 +54,10 @@ public class ProductService
         await _dbContext.SaveChangesAsync();
 
         return product;
+    }
+
+    public Task<Product?> GetByIdAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 }
