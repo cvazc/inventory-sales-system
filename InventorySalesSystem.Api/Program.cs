@@ -8,6 +8,7 @@ using InventorySalesSystem.Api.Services.Interfaces;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Events.Handlers;
 using InventorySalesSystem.Infrastructure;
+using InventorySalesSystem.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Configuration.AddJsonFile(
     reloadOnChange: true
 );
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<IProductService, ProductService>();
