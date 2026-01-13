@@ -1,6 +1,6 @@
 using InventorySalesSystem.Domain.Entities;
 
-namespace InventorySalesSystem.Api.Services.Interfaces;
+namespace InventorySalesSystem.Application.Services.Interfaces;
 
 public interface IProductService
 {

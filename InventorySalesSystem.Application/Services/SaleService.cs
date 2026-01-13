@@ -1,13 +1,13 @@
-using InventorySalesSystem.Api.Contracts.Common;
-using InventorySalesSystem.Api.Contracts.Sales;
+using InventorySalesSystem.Application.Contracts.Common;
+using InventorySalesSystem.Application.Contracts.Sales;
 using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Domain.Entities;
-using InventorySalesSystem.Api.Services.Interfaces;
+using InventorySalesSystem.Application.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace InventorySalesSystem.Api.Services;
+namespace InventorySalesSystem.Application.Services;
 
 public class SaleService : ISaleService
 {

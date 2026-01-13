@@ -1,7 +1,7 @@
-using InventorySalesSystem.Api.Contracts.Common;
-using InventorySalesSystem.Api.Contracts.Sales;
+using InventorySalesSystem.Application.Contracts.Common;
+using InventorySalesSystem.Application.Contracts.Sales;
 
-namespace InventorySalesSystem.Api.Services.Interfaces;
+namespace InventorySalesSystem.Application.Services.Interfaces;
 
 public interface ISaleService
 {

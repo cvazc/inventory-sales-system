@@ -2,9 +2,9 @@ using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Exceptions;
 using InventorySalesSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using InventorySalesSystem.Api.Services.Interfaces;
+using InventorySalesSystem.Application.Services.Interfaces;
 
-namespace InventorySalesSystem.Api.Services;
+namespace InventorySalesSystem.Application.Services;
 
 public class ProductService : IProductService
 {

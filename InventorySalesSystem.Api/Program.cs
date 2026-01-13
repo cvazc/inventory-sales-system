@@ -1,10 +1,8 @@
 using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Middleware;
-using InventorySalesSystem.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using InventorySalesSystem.Api.Services.Interfaces;
 using InventorySalesSystem.Api.Events;
 using InventorySalesSystem.Api.Events.Handlers;
 using InventorySalesSystem.Infrastructure;
@@ -20,9 +18,6 @@ builder.Configuration.AddJsonFile(
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ISaleService, SaleService>();
 
 builder.Services.AddSingleton<SaleEventPublisher>();
 builder.Services.AddSingleton<SaleAuditLogHandler>();
