@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Contracts.Sales;
+namespace InventorySalesSystem.Application.Contracts.Sales;
 
 public class CreateSaleItemRequest
 {

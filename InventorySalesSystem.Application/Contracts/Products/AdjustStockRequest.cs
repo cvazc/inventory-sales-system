@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Contracts.Products;
+namespace InventorySalesSystem.Application.Contracts.Products;
 
 public class AdjustStockRequest
 {

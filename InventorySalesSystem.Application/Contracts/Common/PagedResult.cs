@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Contracts.Common;
+namespace InventorySalesSystem.Application.Contracts.Common;
 
 public class PagedResult<T>
 {

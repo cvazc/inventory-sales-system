@@ -1,4 +1,4 @@
-using InventorySalesSystem.Api.Contracts.Products;
+using InventorySalesSystem.Application.Contracts.Products;
 using InventorySalesSystem.Domain.Entities;
 using InventorySalesSystem.Api.Services;
 using Microsoft.AspNetCore.Mvc;
