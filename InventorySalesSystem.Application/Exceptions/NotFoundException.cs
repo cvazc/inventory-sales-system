@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Exceptions;
+namespace InventorySalesSystem.Application.Exceptions;
 
 public class NotFoundException : Exception
 {

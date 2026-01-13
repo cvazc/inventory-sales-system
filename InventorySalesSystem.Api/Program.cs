@@ -3,8 +3,8 @@ using InventorySalesSystem.Api.Middleware;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using InventorySalesSystem.Api.Events;
-using InventorySalesSystem.Api.Events.Handlers;
+using InventorySalesSystem.Application.Events;
+using InventorySalesSystem.Infrastructure.Handlers;
 using InventorySalesSystem.Infrastructure;
 using InventorySalesSystem.Application;
 

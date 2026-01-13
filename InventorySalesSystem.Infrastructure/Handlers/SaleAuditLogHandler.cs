@@ -1,6 +1,7 @@
+using InventorySalesSystem.Application.Events;
 using Microsoft.Extensions.Logging;
 
-namespace InventorySalesSystem.Api.Events.Handlers;
+namespace InventorySalesSystem.Infrastructure.Handlers;
 
 public class SaleAuditLogHandler
 {

@@ -1,4 +1,4 @@
-namespace InventorySalesSystem.Api.Events;
+namespace InventorySalesSystem.Application.Events;
 
 public class SaleEventPublisher
 {
