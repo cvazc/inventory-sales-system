@@ -1,5 +1,5 @@
 using FluentValidation;
-using InventorySalesSystem.Api.Contracts.Sales;
+using InventorySalesSystem.Application.Contracts.Sales;
 
 namespace InventorySalesSystem.Api.Validation.Sales;
 

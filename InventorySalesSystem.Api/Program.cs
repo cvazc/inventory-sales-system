@@ -1,6 +1,4 @@
-using InventorySalesSystem.Infrastructure.Persistence;
 using InventorySalesSystem.Api.Middleware;
-using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using InventorySalesSystem.Application.Events;

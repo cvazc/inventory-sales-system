@@ -1,23 +1,22 @@
-using InventorySalesSystem.Infrastructure.Persistence;
-using InventorySalesSystem.Api.Exceptions;
+using InventorySalesSystem.Application.Abstractions.Persistence;
+using InventorySalesSystem.Application.Exceptions;
 using InventorySalesSystem.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using InventorySalesSystem.Application.Services.Interfaces;
 
 namespace InventorySalesSystem.Application.Services;
 
 public class ProductService : IProductService
 {
-    private readonly InventoryDbContext _dbContext;
+    private readonly IProductRepository _products;
 
-    public ProductService(InventoryDbContext dbContext)
+    public ProductService(IProductRepository products)
     {
-        _dbContext = dbContext;
+        _products = products;
     }
 
     public async Task<List<Product>> GetAllAsync()
     {
-        return await _dbContext.Products.ToListAsync();
+        return await _products.GetAllAsync();
     }
 
     public async Task<Product> CreateAsync(Product product)
@@ -25,16 +24,15 @@ public class ProductService : IProductService
         product.CreatedAt = DateTime.UtcNow;
         product.IsActive = true;
 
-        _dbContext.Products.Add(product);
-        await _dbContext.SaveChangesAsync();
+        await _products.AddAsync(product);
+        await _products.SaveChangesAsync();
 
         return product;
     }
 
     public async Task<Product> AdjustStockAsync(int productId, int delta)
     {
-        var product = await _dbContext.Products
-            .FirstOrDefaultAsync(p => p.Id == productId);
+        var product = await _products.GetByIdAsync(productId);
 
         if (product is null)
         {
@@ -51,13 +49,13 @@ public class ProductService : IProductService
         product.StockQuantity = newStock;
         product.UpdatedAt = DateTime.UtcNow;
 
-        await _dbContext.SaveChangesAsync();
+        await _products.SaveChangesAsync();
 
         return product;
     }
 
-    public Task<Product?> GetByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _products.GetByIdAsync(id);
     }
 }

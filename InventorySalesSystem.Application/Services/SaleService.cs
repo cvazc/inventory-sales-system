@@ -1,51 +1,35 @@
+using InventorySalesSystem.Application.Events;
+using InventorySalesSystem.Application.Abstractions.Persistence;
 using InventorySalesSystem.Application.Contracts.Common;
 using InventorySalesSystem.Application.Contracts.Sales;
-using InventorySalesSystem.Infrastructure.Persistence;
-using InventorySalesSystem.Application.Events;
 using InventorySalesSystem.Application.Exceptions;
 using InventorySalesSystem.Domain.Entities;
 using InventorySalesSystem.Application.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace InventorySalesSystem.Application.Services;
 
 public class SaleService : ISaleService
 {
-    private readonly InventoryDbContext _dbContext;
+    private readonly ISaleRepository _sales;
+    private readonly IProductRepository _products;
     private readonly SaleEventPublisher _saleEventPublisher;
 
-    public SaleService(InventoryDbContext dbContext, SaleEventPublisher saleEventPublisher)
+    public SaleService(
+        ISaleRepository sales,
+        IProductRepository products,
+        SaleEventPublisher saleEventPublisher)
     {
-        _dbContext = dbContext;
+        _sales = sales;
+        _products = products;
         _saleEventPublisher = saleEventPublisher;
     }
 
     public async Task<PagedResult<SaleResponse>> GetAllAsync(int page, int pageSize)
     {
-        if (page <= 0)
-        {
-            throw new BadRequestException("Page must be greater than zero.");
-        }
+        var totalItems = await _sales.CountAsync();
+        var sales = await _sales.GetPagedAsync(page, pageSize);
 
-        if (pageSize <= 0 || pageSize > 100)
-        {
-            throw new BadRequestException("PageSize must be between 1 and 100.");
-        }
-
-        var query = _dbContext.Sales
-            .Include(s => s.Items)
-            .ThenInclude(i => i.Product)
-            .OrderByDescending(s => s.Id)
-            .AsQueryable();
-
-        var totalItems = await query.CountAsync();
-
-        var sales = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var result = new PagedResult<SaleResponse>
+        return new PagedResult<SaleResponse>
         {
             Items = sales.Select(ToResponse).ToList(),
             Page = page,
@@ -54,7 +38,6 @@ public class SaleService : ISaleService
             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
         };
 
-        return result;
     }
 
     public async Task<SaleResponse> CreateAsync(CreateSaleRequest request)
@@ -86,16 +69,17 @@ public class SaleService : ISaleService
             }
         }
 
-        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+        using var transaction = await _sales.BeginTransactionAsync();
 
-        var productIds = request.Items.Select(i => i.ProductId).Distinct().ToList();
-        var products = await _dbContext.Products
-            .Where(p => productIds.Contains(p.Id))
-            .ToListAsync();
+        var productIds = request.Items
+            .Select(i => i.ProductId)
+            .Distinct()
+            .ToList();
+        var products = await _products.GetByIdsAsync(productIds);
 
         if (products.Count != productIds.Count)
         {
-            throw new BadRequestException("One or more products to not exist.");
+            throw new BadRequestException("One or more products do not exist.");
         }
 
         var sale = new Sale
@@ -138,30 +122,22 @@ public class SaleService : ISaleService
 
         sale.TotalAmount = total;
 
-        _dbContext.Sales.Add(sale);
-        await _dbContext.SaveChangesAsync();
-
-        await transaction.CommitAsync();
+        await _sales.AddAsync(sale);
+        await _sales.SaveChangesAsync();
+        await _sales.CommitTransactionAsync(transaction);
 
         _saleEventPublisher.PublishSaleCreated(
             new SaleCreatedEvent(sale.Id, sale.TotalAmount, sale.CreatedAt)
         );
 
-        await _dbContext.Entry(sale)
-            .Collection(s => s.Items)
-            .Query()
-            .Include(i => i.Product)
-            .LoadAsync();
+        await _sales.LoadSaleItemsWithProductAsync(sale);
 
         return ToResponse(sale);
     }
 
     public async Task<SaleResponse> GetByIdAsync(int id)
     {
-        var sale = await _dbContext.Sales
-            .Include(s => s.Items)
-            .ThenInclude(i => i.Product)
-            .FirstOrDefaultAsync(s => s.Id == id);
+        var sale = await _sales.GetByIdWithItemsAsync(id);
 
         if (sale is null)
         {
@@ -169,6 +145,7 @@ public class SaleService : ISaleService
         }
 
         return ToResponse(sale);
+
     }
 
     private static SaleResponse ToResponse(Sale sale)
