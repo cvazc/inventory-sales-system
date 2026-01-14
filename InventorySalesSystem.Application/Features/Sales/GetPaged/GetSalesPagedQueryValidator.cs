@@ -21,30 +21,11 @@ public sealed class GetSalesPagedQueryHandler
 
         return new PagedResult<SaleResponse>
         {
-            Items = sales.Select(ToResponse).ToList(),
+            Items = sales.Select(SaleMapper.ToResponse).ToList(),
             Page = query.Page,
             PageSize = query.PageSize,
             TotalItems = totalItems,
             TotalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize)
-        };
-    }
-
-    private static SaleResponse ToResponse(Sale sale)
-    {
-        return new SaleResponse
-        {
-            Id = sale.Id,
-            CustomerName = sale.CustomerName,
-            CreatedAt = sale.CreatedAt,
-            TotalAmount = sale.TotalAmount,
-            Items = sale.Items.Select(i => new SaleItemResponse
-            {
-                ProductId = i.ProductId,
-                ProductName = i.Product?.Name,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice,
-                LineTotal = i.LineTotal
-            }).ToList()
         };
     }
 }
