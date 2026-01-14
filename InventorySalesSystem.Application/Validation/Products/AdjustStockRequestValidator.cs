@@ -1,7 +1,7 @@
 using FluentValidation;
 using InventorySalesSystem.Application.Contracts.Products;
 
-namespace InventorySalesSystem.Api.Validation.Products;
+namespace InventorySalesSystem.Application.Validation.Products;
 
 public class AdjustStockRequestValidator : AbstractValidator<AdjustStockRequest>
 {

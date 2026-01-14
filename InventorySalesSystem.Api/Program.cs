@@ -28,7 +28,6 @@ builder.Services
     });
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 

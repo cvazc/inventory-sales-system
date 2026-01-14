@@ -1,7 +1,7 @@
 using FluentValidation;
 using InventorySalesSystem.Application.Contracts.Sales;
 
-namespace InventorySalesSystem.Api.Validation.Sales;
+namespace InventorySalesSystem.Application.Validation.Sales;
 
 public class CreateSaleRequestValidator : AbstractValidator<CreateSaleRequest>
 {
