@@ -42,11 +42,6 @@ public class SaleService : ISaleService
 
     public async Task<SaleResponse> CreateAsync(CreateSaleRequest request)
     {
-        if (request.Items is null || request.Items.Count == 0)
-        {
-            throw new BadRequestException("A sale must contain at least one item.");
-        }
-
         request.Items = request.Items
             .GroupBy(i => i.ProductId)
             .Select(g => new CreateSaleItemRequest
@@ -55,19 +50,6 @@ public class SaleService : ISaleService
                 Quantity = g.Sum(x => x.Quantity)
             })
             .ToList();
-
-        foreach (var item in request.Items)
-        {
-            if (item.ProductId <= 0)
-            {
-                throw new BadRequestException("ProductId must be a positive integer.");
-            }
-
-            if (item.Quantity <= 0)
-            {
-                throw new BadRequestException("Quantity must be greater than zero.");
-            }
-        }
 
         using var transaction = await _sales.BeginTransactionAsync();
 
