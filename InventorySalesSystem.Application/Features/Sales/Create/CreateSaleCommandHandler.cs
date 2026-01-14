@@ -1,47 +1,28 @@
-using InventorySalesSystem.Application.Events;
 using InventorySalesSystem.Application.Abstractions.Persistence;
-using InventorySalesSystem.Application.Contracts.Common;
 using InventorySalesSystem.Application.Contracts.Sales;
+using InventorySalesSystem.Application.Events;
 using InventorySalesSystem.Application.Exceptions;
 using InventorySalesSystem.Domain.Entities;
-using InventorySalesSystem.Application.Services.Interfaces;
 
-namespace InventorySalesSystem.Application.Services;
+namespace InventorySalesSystem.Application.Features.Sales.Create;
 
-public class SaleService : ISaleService
+public sealed class CreateSaleCommandHandler
 {
     private readonly ISaleRepository _sales;
     private readonly IProductRepository _products;
-    private readonly SaleEventPublisher _saleEventPublisher;
+    private readonly SaleEventPublisher _publisher;
 
-    public SaleService(
-        ISaleRepository sales,
-        IProductRepository products,
-        SaleEventPublisher saleEventPublisher)
+    public CreateSaleCommandHandler(ISaleRepository sales, IProductRepository products, SaleEventPublisher publisher)
     {
         _sales = sales;
         _products = products;
-        _saleEventPublisher = saleEventPublisher;
+        _publisher = publisher;
     }
 
-    public async Task<PagedResult<SaleResponse>> GetAllAsync(int page, int pageSize)
+    public async Task<SaleResponse> HandleAsync(CreateSaleCommand command, CancellationToken ct = default)
     {
-        var totalItems = await _sales.CountAsync();
-        var sales = await _sales.GetPagedAsync(page, pageSize);
+        var request = command.Request;
 
-        return new PagedResult<SaleResponse>
-        {
-            Items = sales.Select(ToResponse).ToList(),
-            Page = page,
-            PageSize = pageSize,
-            TotalItems = totalItems,
-            TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
-        };
-
-    }
-
-    public async Task<SaleResponse> CreateAsync(CreateSaleRequest request)
-    {
         request.Items = request.Items
             .GroupBy(i => i.ProductId)
             .Select(g => new CreateSaleItemRequest
@@ -51,18 +32,13 @@ public class SaleService : ISaleService
             })
             .ToList();
 
-        using var transaction = await _sales.BeginTransactionAsync();
+        using var tx = await _sales.BeginTransactionAsync(ct);
 
-        var productIds = request.Items
-            .Select(i => i.ProductId)
-            .Distinct()
-            .ToList();
-        var products = await _products.GetByIdsAsync(productIds);
+        var productIds = request.Items.Select(i => i.ProductId).Distinct().ToList();
+        var products = await _products.GetByIdsAsync(productIds, ct);
 
         if (products.Count != productIds.Count)
-        {
             throw new BadRequestException("One or more products do not exist.");
-        }
 
         var sale = new Sale
         {
@@ -77,14 +53,10 @@ public class SaleService : ISaleService
             var product = products.Single(p => p.Id == reqItem.ProductId);
 
             if (!product.IsActive)
-            {
                 throw new BadRequestException($"Product {product.Id} is not active.");
-            }
 
             if (product.StockQuantity < reqItem.Quantity)
-            {
                 throw new BadRequestException($"Not enough stock for product {product.Id}. Current stock: {product.StockQuantity}.");
-            }
 
             product.StockQuantity -= reqItem.Quantity;
 
@@ -104,30 +76,16 @@ public class SaleService : ISaleService
 
         sale.TotalAmount = total;
 
-        await _sales.AddAsync(sale);
-        await _sales.SaveChangesAsync();
-        await _sales.CommitTransactionAsync(transaction);
+        await _sales.AddAsync(sale, ct);
+        await _sales.SaveChangesAsync(ct);
 
-        _saleEventPublisher.PublishSaleCreated(
-            new SaleCreatedEvent(sale.Id, sale.TotalAmount, sale.CreatedAt)
-        );
+        await _sales.CommitTransactionAsync(tx, ct);
 
-        await _sales.LoadSaleItemsWithProductAsync(sale);
+        _publisher.PublishSaleCreated(new SaleCreatedEvent(sale.Id, sale.TotalAmount, sale.CreatedAt));
 
-        return ToResponse(sale);
-    }
-
-    public async Task<SaleResponse> GetByIdAsync(int id)
-    {
-        var sale = await _sales.GetByIdWithItemsAsync(id);
-
-        if (sale is null)
-        {
-            throw new NotFoundException($"Sale with id {id} was not found.");
-        }
+        await _sales.LoadSaleItemsWithProductAsync(sale, ct);
 
         return ToResponse(sale);
-
     }
 
     private static SaleResponse ToResponse(Sale sale)

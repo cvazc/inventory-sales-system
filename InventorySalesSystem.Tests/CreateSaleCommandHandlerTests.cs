@@ -1,12 +1,12 @@
-using InventorySalesSystem.Application.Services;
+using InventorySalesSystem.Application.Contracts.Sales;
 using InventorySalesSystem.Application.Events;
 using InventorySalesSystem.Application.Exceptions;
+using InventorySalesSystem.Application.Features.Sales.Create;
 using InventorySalesSystem.Domain.Entities;
-using InventorySalesSystem.Application.Contracts.Sales;
 using InventorySalesSystem.Tests.Fakes;
 using Xunit;
 
-public class SaleServiceTests
+public class CreateSaleCommandHandlerTests
 {
     [Fact]
     public async Task CreateAsync_Should_Throw_When_Stock_Is_Insufficient()
@@ -23,7 +23,7 @@ public class SaleServiceTests
         var salesRepo = new FakeSaleRepository();
         var publisher = new SaleEventPublisher();
 
-        var service = new SaleService(salesRepo, productsRepo, publisher);
+        var handler = new CreateSaleCommandHandler(salesRepo, productsRepo, publisher);
 
         var request = new CreateSaleRequest
         {
@@ -37,9 +37,9 @@ public class SaleServiceTests
                 }
             }
         };
-        
+
         await Assert.ThrowsAsync<BadRequestException>(
-            () => service.CreateAsync(request)
+            () => handler.HandleAsync(new CreateSaleCommand(request))
         );
     }
 }
