@@ -1,7 +1,7 @@
 using InventorySalesSystem.Infrastructure.Persistence;
-using InventorySalesSystem.Api.Exceptions;
+using InventorySalesSystem.Application.Exceptions;
 using InventorySalesSystem.Domain.Entities;
-using InventorySalesSystem.Api.Services;
+using InventorySalesSystem.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

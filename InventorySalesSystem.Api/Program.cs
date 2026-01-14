@@ -17,7 +17,6 @@ builder.Configuration.AddJsonFile(
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddSingleton<SaleEventPublisher>();
 builder.Services.AddSingleton<SaleAuditLogHandler>();
 
 builder.Services
