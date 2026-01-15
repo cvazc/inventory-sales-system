@@ -1,8 +1,7 @@
-using InventorySalesSystem.Api.Contracts.Products;
-using InventorySalesSystem.Api.Models;
-using InventorySalesSystem.Api.Services;
+using InventorySalesSystem.Application.Contracts.Products;
+using InventorySalesSystem.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using InventorySalesSystem.Api.Services.Interfaces;
+using InventorySalesSystem.Application.Services.Interfaces;
 
 namespace InventorySalesSystem.Api.Controllers;
 

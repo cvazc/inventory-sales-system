@@ -1,35 +1,20 @@
-using InventorySalesSystem.Api.Data;
-using InventorySalesSystem.Api.Exceptions;
-using InventorySalesSystem.Api.Models;
-using InventorySalesSystem.Api.Services;
-using Microsoft.EntityFrameworkCore;
+using InventorySalesSystem.Application.Services;
+using InventorySalesSystem.Tests.Fakes;
+using InventorySalesSystem.Domain.Entities;
 using Xunit;
 
 public class ProductServiceTests
 {
     [Fact]
-    public async Task AdjustStockAsync_ShouldThrow_WhenStockWouldGoBelowZero()
+    public async Task AdjustStockAsync_Should_Not_Allow_Below_Zero()
     {
-        var options = new DbContextOptionsBuilder<InventoryDbContext>()
-            .UseInMemoryDatabase(databaseName: "ProductServiceTests_AdjustStockBelowZero")
-            .Options;
+        var repo = new FakeProductRepository();
+        repo.Seed(new Product { Id = 1, StockQuantity = 0, IsActive = true });
 
-        using var dbContext = new InventoryDbContext(options);
+        var service = new ProductService(repo);
 
-        dbContext.Products.Add(new Product
-        {
-            Sku = "PROD-TEST",
-            Name = "Test Product",
-            StockQuantity = 2,
-            Price = 10,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        });
-
-        await dbContext.SaveChangesAsync();
-
-        var service = new ProductService(dbContext);
-
-        await Assert.ThrowsAsync<BadRequestException>(() => service.AdjustStockAsync(productId: 1, delta: -999));
+        await Assert.ThrowsAsync<InventorySalesSystem.Application.Exceptions.BadRequestException>(
+            () => service.AdjustStockAsync(1, -1)
+        );
     }
 }
