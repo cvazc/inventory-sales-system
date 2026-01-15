@@ -2,7 +2,7 @@ using InventorySalesSystem.Application.Contracts.Sales;
 
 namespace InventorySalesSystem.Application.Features.Sales.Create;
 
-internal static class CreateSaleRequestNormalizer
+public static class CreateSaleRequestNormalizer
 {
     public static void Normalize(CreateSaleRequest request)
     {
