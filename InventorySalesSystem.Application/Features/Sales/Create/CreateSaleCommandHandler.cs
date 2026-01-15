@@ -23,14 +23,7 @@ public sealed class CreateSaleCommandHandler
     {
         var request = command.Request;
 
-        request.Items = request.Items
-            .GroupBy(i => i.ProductId)
-            .Select(g => new CreateSaleItemRequest
-            {
-                ProductId = g.Key,
-                Quantity = g.Sum(x => x.Quantity)
-            })
-            .ToList();
+        CreateSaleRequestNormalizer.Normalize(request);
 
         using var tx = await _sales.BeginTransactionAsync(ct);
 
