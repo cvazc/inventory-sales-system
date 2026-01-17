@@ -11,7 +11,6 @@ public interface ISaleRepository
     Task AddAsync(Sale sale, CancellationToken ct = default);
     Task LoadSaleItemsWithProductAsync(Sale sale, CancellationToken ct = default);
 
-    Task<IDisposable> BeginTransactionAsync(CancellationToken ct = default);
+    Task<ITransaction> BeginTransactionAsync(CancellationToken ct = default);
     Task SaveChangesAsync(CancellationToken ct = default);
-    Task CommitTransactionAsync(IDisposable transaction, CancellationToken ct = default);
 }

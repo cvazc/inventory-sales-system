@@ -25,7 +25,7 @@ public sealed class CreateSaleCommandHandler
 
         CreateSaleRequestNormalizer.Normalize(request);
 
-        using var tx = await _sales.BeginTransactionAsync(ct);
+        await using var tx = await _sales.BeginTransactionAsync(ct);
 
         var productIds = request.Items.Select(i => i.ProductId).Distinct().ToList();
         var products = await _products.GetByIdsAsync(productIds, ct);
@@ -72,7 +72,7 @@ public sealed class CreateSaleCommandHandler
         await _sales.AddAsync(sale, ct);
         await _sales.SaveChangesAsync(ct);
 
-        await _sales.CommitTransactionAsync(tx, ct);
+        await tx.CommitAsync(ct);
 
         _publisher.PublishSaleCreated(new SaleCreatedEvent(sale.Id, sale.TotalAmount, sale.CreatedAt));
 

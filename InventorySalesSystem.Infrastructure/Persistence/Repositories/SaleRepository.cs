@@ -1,6 +1,7 @@
 using InventorySalesSystem.Application.Abstractions.Persistence;
 using InventorySalesSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using InventorySalesSystem.Infrastructure.Persistence.Transactions;
 
 namespace InventorySalesSystem.Infrastructure.Persistence.Repositories;
 
@@ -43,17 +44,13 @@ public class SaleRepository : ISaleRepository
             .LoadAsync(ct);
     }
 
-    public async Task<IDisposable> BeginTransactionAsync(CancellationToken ct = default)
-        => await _dbContext.Database.BeginTransactionAsync(ct);
+    public async Task<ITransaction> BeginTransactionAsync(CancellationToken ct = default)
+    {
+        var tx = await _dbContext.Database.BeginTransactionAsync(ct);
+        return new EfTransaction(tx);
+    }
+
 
     public Task SaveChangesAsync(CancellationToken ct = default)
         => _dbContext.SaveChangesAsync(ct);
-
-    public async Task CommitTransactionAsync(IDisposable transaction, CancellationToken ct = default)
-    {
-        if (transaction is Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction dbTx)
-            await dbTx.CommitAsync(ct);
-        else
-            transaction.Dispose();
-    }
 }

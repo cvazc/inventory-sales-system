@@ -29,20 +29,15 @@ public class FakeSaleRepository : ISaleRepository
     public Task LoadSaleItemsWithProductAsync(Sale sale, CancellationToken ct = default)
         => Task.CompletedTask;
 
-    public Task<IDisposable> BeginTransactionAsync(CancellationToken ct = default)
-        => Task.FromResult<IDisposable>(new FakeTransaction());
+    public Task<ITransaction> BeginTransactionAsync(CancellationToken ct = default)
+    => Task.FromResult<ITransaction>(new FakeTransaction());
 
     public Task SaveChangesAsync(CancellationToken ct = default)
         => Task.CompletedTask;
 
-    public Task CommitTransactionAsync(IDisposable transaction, CancellationToken ct = default)
+    private sealed class FakeTransaction : ITransaction
     {
-        transaction.Dispose();
-        return Task.CompletedTask;
-    }
-
-    private sealed class FakeTransaction : IDisposable
-    {
-        public void Dispose() { }
+        public Task CommitAsync(CancellationToken ct = default) => Task.CompletedTask;
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }
