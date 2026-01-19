@@ -33,7 +33,6 @@ public class SalesController : ControllerBase
     }
 
     [Authorize]
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateSaleRequest request)
     {
