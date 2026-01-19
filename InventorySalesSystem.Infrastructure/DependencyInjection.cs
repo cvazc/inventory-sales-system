@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ISaleRepository, SaleRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<InventorySalesSystem.Infrastructure.Persistence.Seeding.DatabaseSeeder>();
 
         return services;
     }
