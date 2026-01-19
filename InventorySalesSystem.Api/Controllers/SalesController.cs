@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using InventorySalesSystem.Application.Features.Sales.Create;
 using InventorySalesSystem.Application.Features.Sales.GetById;
 using InventorySalesSystem.Application.Features.Sales.GetPaged;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventorySalesSystem.Api.Controllers;
 
@@ -31,6 +32,8 @@ public class SalesController : ControllerBase
         return Ok(sales);
     }
 
+    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateSaleRequest request)
     {
