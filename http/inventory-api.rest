@@ -1,3 +1,67 @@
+@accessToken =
+
+###
+
+### Register (Admin) - first time
+POST {{apiBaseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "Password123!",
+  "role": "Admin"
+}
+
+###
+
+### Register (Clerk) - optional
+POST {{apiBaseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "clerk@test.com",
+  "password": "Password123!",
+  "role": "Clerk"
+}
+
+###
+
+### Login (Admin) - captures token
+# @name loginAdmin
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "Password123!"
+}
+
+###
+
+@accessToken = {{loginAdmin.response.body.accessToken}}
+
+### Login (invalid credentials)
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "wrong-password"
+}
+
+###
+
+### Who am I (optional) - only if you add /me later
+# GET {{apiBaseUrl}}/api/auth/me
+# Authorization: Bearer {{accessToken}}
+# Accept: application/json
+
+###
+
 ### Get all products
 GET {{apiBaseUrl}}/api/products
 Accept: application/json
@@ -64,8 +128,9 @@ Accept: application/json
 
 ###
 
-### Create a sale (valid)
+### Create a sale (valid) - requires auth
 POST {{apiBaseUrl}}/api/sales
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 Accept: application/json
 
@@ -73,6 +138,20 @@ Accept: application/json
   "customerName": "Sebastian",
   "items": [
     { "productId": 1, "quantity": 2 }
+  ]
+}
+
+###
+
+### Create a sale (should fail - missing token)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 1 }
   ]
 }
 
@@ -117,8 +196,9 @@ Accept: application/json
 
 ###
 
-### Adjust stock (add 10)
+### Adjust stock (add 10) - requires auth
 PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 Accept: application/json
 

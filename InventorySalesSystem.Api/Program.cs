@@ -5,6 +5,11 @@ using InventorySalesSystem.Application.Events;
 using InventorySalesSystem.Infrastructure.Handlers;
 using InventorySalesSystem.Infrastructure;
 using InventorySalesSystem.Application;
+using System.Text;
+using InventorySalesSystem.Api.Security;
+using InventorySalesSystem.Application.Abstractions.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +21,7 @@ builder.Configuration.AddJsonFile(
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<ITokenService, JwtTokenService>();
 
 builder.Services.AddSingleton<SaleAuditLogHandler>();
 
@@ -28,6 +34,31 @@ builder.Services
 
 builder.Services.AddFluentValidationAutoValidation();
 
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+var jwtKey = builder.Configuration["Jwt:Key"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!)),
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 var salePublisher = app.Services.GetRequiredService<SaleEventPublisher>();
@@ -36,6 +67,10 @@ var auditHandler = app.Services.GetRequiredService<SaleAuditLogHandler>();
 salePublisher.SaleCreated += auditHandler.OnSaleCreated;
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
