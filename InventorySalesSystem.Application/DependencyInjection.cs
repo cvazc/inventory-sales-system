@@ -11,6 +11,7 @@ using InventorySalesSystem.Application.Abstractions.Security;
 using InventorySalesSystem.Application.Features.Auth.Login;
 using InventorySalesSystem.Application.Features.Auth.Register;
 using InventorySalesSystem.Application.Security;
+using InventorySalesSystem.Application.Features.Auth.Me;
 
 namespace InventorySalesSystem.Application;
 
@@ -24,11 +25,11 @@ public static class DependencyInjection
         services.AddScoped<CreateSaleCommandHandler>();
         services.AddScoped<GetSaleByIdQueryHandler>();
         services.AddScoped<GetSalesPagedQueryHandler>();
-        
+
         services.AddScoped<RegisterUserCommandHandler>();
         services.AddScoped<LoginUserCommandHandler>();
         services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
-
+        services.AddScoped<GetMeQueryHandler>();
 
         return services;
     }
