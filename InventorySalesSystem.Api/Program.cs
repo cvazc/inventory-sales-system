@@ -29,7 +29,7 @@ builder.Services
     .AddControllers()
     .AddJsonOptions(options =>
     {
-        
+
     });
 
 builder.Services.AddFluentValidationAutoValidation();
@@ -60,6 +60,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    var seedEnabled = config["Seed:Enabled"];
+
+    if (string.Equals(seedEnabled, "true", StringComparison.OrdinalIgnoreCase))
+    {
+        var seeder = scope.ServiceProvider
+            .GetRequiredService<InventorySalesSystem.Infrastructure.Persistence.Seeding.DatabaseSeeder>();
+
+        await seeder.SeedAsync();
+    }
+}
 
 var salePublisher = app.Services.GetRequiredService<SaleEventPublisher>();
 var auditHandler = app.Services.GetRequiredService<SaleAuditLogHandler>();
