@@ -306,3 +306,16 @@ GET {{apiBaseUrl}}/api/sales?page=1&pageSize=1000
 Accept: application/json
 
 ###
+
+### Me (Admin)
+GET {{apiBaseUrl}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+### Me (No token) - should fail (401)
+GET {{apiBaseUrl}}/api/auth/me
+Accept: application/json
+
+###
