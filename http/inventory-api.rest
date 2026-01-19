@@ -1,4 +1,5 @@
 @accessToken =
+@clerkToken =
 
 ###
 
@@ -52,6 +53,23 @@ Accept: application/json
   "email": "admin@test.com",
   "password": "wrong-password"
 }
+
+###
+
+### Login (Clerk)
+# @name loginClerk
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "clerk@test.com",
+  "password": "Password123!"
+}
+
+###
+
+@clerkToken = {{loginClerk.response.body.accessToken}}
 
 ###
 
@@ -130,7 +148,7 @@ Accept: application/json
 
 ### Create a sale (valid) - requires auth
 POST {{apiBaseUrl}}/api/sales
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{clerkToken}}
 Content-Type: application/json
 Accept: application/json
 
@@ -229,6 +247,44 @@ Accept: application/json
 {
   "delta": -999,
   "reason": "Invalid"
+}
+
+###
+
+### Adjust stock (Admin) - should succeed
+PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Admin restock"
+}
+
+###
+
+### Adjust stock (Clerk) - should fail (403)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{clerkToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Clerk restock attempt"
+}
+
+###
+
+### Adjust stock (No token) - should fail (401)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "No token"
 }
 
 ###
