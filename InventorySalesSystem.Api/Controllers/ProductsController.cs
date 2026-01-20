@@ -1,8 +1,8 @@
-using InventorySalesSystem.Api.Contracts.Products;
-using InventorySalesSystem.Api.Models;
-using InventorySalesSystem.Api.Services;
+using InventorySalesSystem.Application.Contracts.Products;
+using InventorySalesSystem.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using InventorySalesSystem.Api.Services.Interfaces;
+using InventorySalesSystem.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventorySalesSystem.Api.Controllers;
 
@@ -24,6 +24,7 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(Product product)
     {
@@ -52,6 +53,7 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetAll), new { id = createdProduct.Id }, createdProduct);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}/stock")]
     public async Task<IActionResult> AdjustStock(int id, AdjustStockRequest request)
     {

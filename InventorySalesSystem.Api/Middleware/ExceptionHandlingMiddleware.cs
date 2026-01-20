@@ -1,5 +1,5 @@
 using System.Net;
-using InventorySalesSystem.Api.Exceptions;
+using InventorySalesSystem.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySalesSystem.Api.Middleware;

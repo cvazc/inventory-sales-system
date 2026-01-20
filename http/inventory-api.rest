@@ -1,3 +1,85 @@
+@accessToken =
+@clerkToken =
+
+###
+
+### Register (Admin) - first time
+POST {{apiBaseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "Password123!",
+  "role": "Admin"
+}
+
+###
+
+### Register (Clerk) - optional
+POST {{apiBaseUrl}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "clerk@test.com",
+  "password": "Password123!",
+  "role": "Clerk"
+}
+
+###
+
+### Login (Admin) - captures token
+# @name loginAdmin
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "Password123!"
+}
+
+###
+
+@accessToken = {{loginAdmin.response.body.accessToken}}
+
+### Login (invalid credentials)
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "wrong-password"
+}
+
+###
+
+### Login (Clerk)
+# @name loginClerk
+POST {{apiBaseUrl}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "clerk@test.com",
+  "password": "Password123!"
+}
+
+###
+
+@clerkToken = {{loginClerk.response.body.accessToken}}
+
+###
+
+### Who am I (optional) - only if you add /me later
+# GET {{apiBaseUrl}}/api/auth/me
+# Authorization: Bearer {{accessToken}}
+# Accept: application/json
+
+###
+
 ### Get all products
 GET {{apiBaseUrl}}/api/products
 Accept: application/json
@@ -64,8 +146,9 @@ Accept: application/json
 
 ###
 
-### Create a sale (valid)
+### Create a sale (valid) - requires auth
 POST {{apiBaseUrl}}/api/sales
+Authorization: Bearer {{clerkToken}}
 Content-Type: application/json
 Accept: application/json
 
@@ -73,6 +156,20 @@ Accept: application/json
   "customerName": "Sebastian",
   "items": [
     { "productId": 1, "quantity": 2 }
+  ]
+}
+
+###
+
+### Create a sale (should fail - missing token)
+POST {{apiBaseUrl}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerName": "Sebastian",
+  "items": [
+    { "productId": 1, "quantity": 1 }
   ]
 }
 
@@ -117,8 +214,9 @@ Accept: application/json
 
 ###
 
-### Adjust stock (add 10)
+### Adjust stock (add 10) - requires auth
 PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 Accept: application/json
 
@@ -153,6 +251,44 @@ Accept: application/json
 
 ###
 
+### Adjust stock (Admin) - should succeed
+PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Admin restock"
+}
+
+###
+
+### Adjust stock (Clerk) - should fail (403)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Authorization: Bearer {{clerkToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "Clerk restock attempt"
+}
+
+###
+
+### Adjust stock (No token) - should fail (401)
+PUT {{apiBaseUrl}}/api/products/1/stock
+Content-Type: application/json
+Accept: application/json
+
+{
+  "delta": 10,
+  "reason": "No token"
+}
+
+###
+
 ### Get paged sales (page 1)
 GET {{apiBaseUrl}}/api/sales?page=1&pageSize=5
 Accept: application/json
@@ -167,6 +303,19 @@ Accept: application/json
 
 ### Get paged sales (invalid pageSize)
 GET {{apiBaseUrl}}/api/sales?page=1&pageSize=1000
+Accept: application/json
+
+###
+
+### Me (Admin)
+GET {{apiBaseUrl}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+### Me (No token) - should fail (401)
+GET {{apiBaseUrl}}/api/auth/me
 Accept: application/json
 
 ###
