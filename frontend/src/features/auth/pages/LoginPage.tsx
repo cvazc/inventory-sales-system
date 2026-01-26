@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { useAuth } from "../useAuth"
 import type { LoginRequest } from "../types/auth.types"
+import { useNavigate } from 'react-router-dom'
 
 export function LoginPage() {
     const { login } = useAuth()
+    const navigate = useNavigate()
 
     const [form, setForm] = useState<LoginRequest>({ email: "", password: "" })
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -16,6 +18,7 @@ export function LoginPage() {
 
         try {
             await login(form)
+            navigate('/', { replace: true })
         } catch (err) {
             const message = err instanceof Error ? err.message : "Login failed"
             setError(message)
