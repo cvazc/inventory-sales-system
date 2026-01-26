@@ -59,6 +59,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendDev", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        // cookies/refresh token for cookies:
+        // .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -81,6 +94,8 @@ var auditHandler = app.Services.GetRequiredService<SaleAuditLogHandler>();
 salePublisher.SaleCreated += auditHandler.OnSaleCreated;
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseCors("FrontendDev");
 
 app.UseAuthentication();
 
