@@ -5,6 +5,7 @@ import { RequireRole } from "./app/guards/RequireRole"
 import { DashboardPage } from "./app/pages/DashboardPage"
 import { SalesPage } from "./features/sales/pages/SalesPage"
 import StockAdjustmentsPage from "./features/stockAdjustments/pages/StockAdjustmentsPage"
+import ProductsPage from "./features/products/pages/ProductsPage"
 
 function App() {
     return (
@@ -36,6 +37,17 @@ function App() {
                         <RequireAuth>
                             <RequireRole role="Admin">
                                 <StockAdjustmentsPage />
+                            </RequireRole>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/products"
+                    element={
+                        <RequireAuth>
+                            <RequireRole role="Admin">
+                                <ProductsPage />
                             </RequireRole>
                         </RequireAuth>
                     }

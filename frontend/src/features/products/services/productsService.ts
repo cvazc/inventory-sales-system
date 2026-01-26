@@ -10,6 +10,31 @@ export type ProductListItem = {
     isActive: boolean
 }
 
-export async function getProducts(): Promise<ProductListItem[]> {
-    return request<ProductListItem[]>("/api/products", { method: "GET" })
+export type CreateProductRequest = {
+    sku: string
+    name: string
+    description?: string
+    stockQuantity: number
+    price: number
+    isActive: boolean
+}
+
+export async function getProducts(
+    accessToken?: string,
+): Promise<ProductListItem[]> {
+    return request<ProductListItem[]>("/api/products", {
+        method: "GET",
+        accessToken,
+    })
+}
+
+export async function createProduct(
+    accessToken: string,
+    payload: CreateProductRequest,
+): Promise<ProductListItem> {
+    return request<ProductListItem>("/api/products", {
+        method: "POST",
+        accessToken,
+        body: payload,
+    })
 }
