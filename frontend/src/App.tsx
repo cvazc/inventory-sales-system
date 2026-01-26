@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { LoginPage } from "./features/auth/pages/LoginPage"
 import { RequireAuth } from "./app/guards/RequireAuth"
+import { RequireRole } from "./app/guards/RequireRole"
 import { DashboardPage } from "./app/pages/DashboardPage"
 import { SalesPage } from "./features/sales/pages/SalesPage"
+import StockAdjustmentsPage from "./features/stockAdjustments/pages/StockAdjustmentsPage"
 
 function App() {
     return (
@@ -24,6 +26,17 @@ function App() {
                     element={
                         <RequireAuth>
                             <SalesPage />
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/stock-adjustments"
+                    element={
+                        <RequireAuth>
+                            <RequireRole role="Admin">
+                                <StockAdjustmentsPage />
+                            </RequireRole>
                         </RequireAuth>
                     }
                 />

@@ -1,11 +1,12 @@
-import { Navigate } from 'react-router-dom'
-import { useAuth } from '../../features/auth/useAuth'
+import type { ReactElement } from "react"
+import { Navigate } from "react-router-dom"
+import { useAuth } from "../../features/auth/useAuth"
 
-export function RequireAuth({ children }: { children: JSX.Element }) {
-  const { isAuthenticated, isLoading } = useAuth()
+export function RequireAuth({ children }: { children: ReactElement }) {
+    const { isAuthenticated, isLoading } = useAuth()
 
-  if (isLoading) return null
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+    if (isLoading) return null
+    if (!isAuthenticated) return <Navigate to="/login" replace />
 
-  return children
+    return children
 }
