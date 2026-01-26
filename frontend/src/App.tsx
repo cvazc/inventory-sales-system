@@ -1,9 +1,7 @@
+import { LoginPage } from "./features/auth/pages/LoginPage"
+
 function App() {
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-            <h1 className="text-4xl font-bold">Inventory Sales System</h1>
-        </div>
-    )
+    return <LoginPage />
 }
 
 export default App
