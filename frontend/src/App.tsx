@@ -1,21 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { LoginPage } from "./features/auth/pages/LoginPage"
 import { RequireAuth } from "./app/guards/RequireAuth"
-
-function Dashboard() {
-    return <div className="p-6 text-white">Dashboard</div>
-}
+import { DashboardPage } from "./app/pages/DashboardPage"
+import { SalesPage } from "./features/sales/pages/SalesPage"
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+
                 <Route
                     path="/"
                     element={
                         <RequireAuth>
-                            <Dashboard />
+                            <DashboardPage />
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/sales"
+                    element={
+                        <RequireAuth>
+                            <SalesPage />
                         </RequireAuth>
                     }
                 />
