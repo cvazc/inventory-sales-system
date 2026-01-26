@@ -1,67 +1,80 @@
-import { useEffect, useState } from "react"
-import type {
-    LoginRequest,
-    LoginResponse,
-    MeResponse,
-} from "./types/auth.types"
-import * as authService from "./services/authService"
-import { AuthContext } from "./AuthContext"
-import type { AuthContextValue } from "./AuthContext"
+import type { ReactNode } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { AuthContext, type AuthUser } from "./AuthContext"
+import { request } from "../../shared/lib/apiClient"
+import type { LoginRequest } from "./types/auth.types"
 
-const TOKEN_KEY = "access_token"
+const ACCESS_TOKEN_KEY = "accessToken"
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<MeResponse | null>(null)
-    const [accessToken, setAccessToken] = useState<string | null>(
-        localStorage.getItem(TOKEN_KEY),
-    )
+type LoginResponse = {
+    accessToken: string
+    email: string
+    role: "Admin" | "Clerk"
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+    const [user, setUser] = useState<AuthUser | null>(null)
+    const [accessToken, setAccessToken] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
-    const isAuthenticated = Boolean(accessToken)
+    const isAuthenticated = !!accessToken
 
-    async function login(payload: LoginRequest): Promise<void> {
-        const result: LoginResponse = await authService.login(payload)
-        localStorage.setItem(TOKEN_KEY, result.accessToken)
-        setAccessToken(result.accessToken)
+    useEffect(() => {
+        // Restore session
+        const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+        if (!token) {
+            setIsLoading(false)
+            return
+        }
 
-        const me = await authService.me(result.accessToken)
-        setUser(me)
+        setAccessToken(token)
+        ;(async () => {
+            try {
+                // tu backend ya tiene /api/auth/me
+                const me = await request<AuthUser>("/api/auth/me", {
+                    method: "GET",
+                    accessToken: token,
+                })
+                setUser(me)
+            } catch {
+                // token inválido/expirado
+                localStorage.removeItem(ACCESS_TOKEN_KEY)
+                setAccessToken(null)
+                setUser(null)
+            } finally {
+                setIsLoading(false)
+            }
+        })()
+    }, [])
+
+    async function login(payload: LoginRequest) {
+        const res = await request<LoginResponse>("/api/auth/login", {
+            method: "POST",
+            body: payload,
+        })
+
+        localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken)
+        setAccessToken(res.accessToken)
+        setUser({ email: res.email, role: res.role })
     }
 
     function logout() {
-        localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem(ACCESS_TOKEN_KEY)
         setAccessToken(null)
         setUser(null)
     }
 
-    useEffect(() => {
-        async function restoreSession() {
-            if (!accessToken) {
-                setIsLoading(false)
-                return
-            }
-
-            try {
-                const me = await authService.me(accessToken)
-                setUser(me)
-            } catch {
-                logout()
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        restoreSession()
-    }, [])
-
-    const value: AuthContextValue & { isLoading: boolean } = {
-        user,
-        accessToken,
-        isAuthenticated,
-        login,
-        logout,
-        isLoading,
-    }
+    const value = useMemo(
+        () => ({
+            user,
+            accessToken,
+            isAuthenticated,
+            isLoading,
+            login,
+            logout,
+        }),
+        [user, accessToken, isAuthenticated, isLoading],
+    )
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

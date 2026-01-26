@@ -48,3 +48,23 @@ export async function request<T>(
 
     return parseJson<T>(response)
 }
+
+export async function get<T>(path: string, accessToken?: string | null): Promise<T> {
+  return request<T>(path, { method: "GET", accessToken })
+}
+
+export async function post<T>(path: string, body?: unknown, accessToken?: string | null): Promise<T> {
+  return request<T>(path, { method: "POST", body, accessToken })
+}
+
+export async function put<T>(path: string, body?: unknown, accessToken?: string | null): Promise<T> {
+  return request<T>(path, { method: "PUT", body, accessToken })
+}
+
+export async function patch<T>(path: string, body?: unknown, accessToken?: string | null): Promise<T> {
+  return request<T>(path, { method: "PATCH", body, accessToken })
+}
+
+export async function del<T>(path: string, accessToken?: string | null): Promise<T> {
+  return request<T>(path, { method: "DELETE", accessToken })
+}
