@@ -6,6 +6,7 @@ import { DashboardPage } from "./app/pages/DashboardPage"
 import { SalesPage } from "./features/sales/pages/SalesPage"
 import StockAdjustmentsPage from "./features/stockAdjustments/pages/StockAdjustmentsPage"
 import ProductsPage from "./features/products/pages/ProductsPage"
+import { AppLayout } from "./app/layout/AppLayout"
 
 function App() {
     return (
@@ -17,7 +18,9 @@ function App() {
                     path="/"
                     element={
                         <RequireAuth>
-                            <DashboardPage />
+                            <AppLayout>
+                                <DashboardPage />
+                            </AppLayout>
                         </RequireAuth>
                     }
                 />
@@ -26,7 +29,9 @@ function App() {
                     path="/sales"
                     element={
                         <RequireAuth>
-                            <SalesPage />
+                            <AppLayout>
+                                <SalesPage />
+                            </AppLayout>
                         </RequireAuth>
                     }
                 />
@@ -36,7 +41,9 @@ function App() {
                     element={
                         <RequireAuth>
                             <RequireRole role="Admin">
-                                <StockAdjustmentsPage />
+                                <AppLayout>
+                                    <StockAdjustmentsPage />
+                                </AppLayout>
                             </RequireRole>
                         </RequireAuth>
                     }
@@ -47,7 +54,9 @@ function App() {
                     element={
                         <RequireAuth>
                             <RequireRole role="Admin">
-                                <ProductsPage />
+                                <AppLayout>
+                                    <ProductsPage />
+                                </AppLayout>
                             </RequireRole>
                         </RequireAuth>
                     }
